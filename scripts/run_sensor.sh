@@ -1,2 +1,2 @@
 #!/bin/bash
-./build/touch_sensor
+./build/robot --sensor

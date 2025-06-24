@@ -1,99 +1,59 @@
-#include "robotlib/tcp_client.h"
+#include "robotlib/motor.h"
+#include "robotlib/touch_sensor.h"
+#include "robotlib/controller.h"
 #include <iostream>
-#include <thread>
-#include <chrono>
+#include <string>
+#include <vector>
 
-int main() {
-    TcpClient motor1("127.0.0.1", MOTOR1_PORT);
-    TcpClient motor2("127.0.0.1", MOTOR2_PORT);
-    TcpClient sensor("127.0.0.1", SENSOR_PORT);
+void printUsage(const char* prog) {
+    std::cout << "Usage: " << prog << " [--main | --motor <id> | --sensor] [--port <p>]" << std::endl;
+}
 
-    bool m1ok = false;
-    bool m2ok = false;
-    bool senok = false;
+int main(int argc, char* argv[]) {
+    enum Mode {NONE, MAIN, MOTOR, SENSOR};
+    Mode mode = NONE;
+    int motorId = 0;
+    int port = 0;
+    std::vector<int> motorPorts;
+    std::vector<int> sensorPorts;
 
-    int target = 0;
-    int step = 0;
-
-    while (true) {
-        if (!m1ok) {
-            m1ok = motor1.connectToServer();
-            if (m1ok) {
-                std::cout << "Motor1 connected\n";
-            } else {
-                std::cerr << "Warning: could not connect to Motor1\n";
-            }
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--main") {
+            mode = MAIN;
+        } else if (arg == "--motor" && i + 1 < argc) {
+            mode = MOTOR;
+            motorId = std::stoi(argv[++i]);
+        } else if (arg == "--sensor") {
+            mode = SENSOR;
+        } else if (arg == "--port" && i + 1 < argc) {
+            port = std::stoi(argv[++i]);
+        } else if (arg == "--motor-port" && i + 1 < argc) {
+            motorPorts.push_back(std::stoi(argv[++i]));
+        } else if (arg == "--sensor-port" && i + 1 < argc) {
+            sensorPorts.push_back(std::stoi(argv[++i]));
+        } else {
+            printUsage(argv[0]);
+            return 1;
         }
-        if (!m2ok) {
-            m2ok = motor2.connectToServer();
-            if (m2ok) {
-                std::cout << "Motor2 connected\n";
-            } else {
-                std::cerr << "Warning: could not connect to Motor2\n";
-            }
-        }
-        if (!senok) {
-            senok = sensor.connectToServer();
-            if (senok) {
-                std::cout << "TouchSensor connected\n";
-            } else {
-                std::cerr << "Warning: could not connect to TouchSensor\n";
-            }
-        }
+    }
 
-        std::string r;
-        if (m1ok) {
-            if (!motor1.sendData("GET") || !motor1.receiveData(r)) {
-                std::cerr << "Lost connection to Motor1\n";
-                motor1.closeConnection();
-                m1ok = false;
-            } else {
-                std::cout << "Motor1 " << r << "\n";
-            }
-        }
-
-        if (m2ok) {
-            if (!motor2.sendData("GET") || !motor2.receiveData(r)) {
-                std::cerr << "Lost connection to Motor2\n";
-                motor2.closeConnection();
-                m2ok = false;
-            } else {
-                std::cout << "Motor2 " << r << "\n";
-            }
-        }
-
-        if (senok) {
-            if (!sensor.sendData("READ") || !sensor.receiveData(r)) {
-                std::cerr << "Lost connection to TouchSensor\n";
-                sensor.closeConnection();
-                senok = false;
-            } else {
-                std::cout << "TouchSensor " << r << "\n";
-            }
-        }
-
-        if (step % 10 == 0) {
-            target += 10;
-            if (m1ok) {
-                std::string cmd = "MOVE " + std::to_string(target);
-                if (!motor1.sendData(cmd) || !motor1.receiveData(r)) {
-                    std::cerr << "Lost connection to Motor1\n";
-                    motor1.closeConnection();
-                    m1ok = false;
-                }
-            }
-            if (m2ok) {
-                std::string cmd = "MOVE " + std::to_string(-target);
-                if (!motor2.sendData(cmd) || !motor2.receiveData(r)) {
-                    std::cerr << "Lost connection to Motor2\n";
-                    motor2.closeConnection();
-                    m2ok = false;
-                }
-            }
-        }
-
-        step++;
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    if (mode == MAIN) {
+        if (motorPorts.empty()) motorPorts = {5001, 5002};
+        if (sensorPorts.empty()) sensorPorts = {5003};
+        Controller controller(motorPorts, sensorPorts);
+        controller.run();
+    } else if (mode == MOTOR) {
+        if (port == 0) port = 5000 + motorId;
+        Motor motor("Motor" + std::to_string(motorId), port, motorId);
+        motor.run();
+    } else if (mode == SENSOR) {
+        if (port == 0) port = 5003;
+        TouchSensor sensor("TouchSensor", port);
+        sensor.run();
+    } else {
+        printUsage(argv[0]);
+        return 1;
     }
 
     return 0;
