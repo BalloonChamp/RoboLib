@@ -9,10 +9,6 @@ include_directories(include)
 add_library(robotlib
     src/tcp_server.cpp
     src/tcp_client.cpp
-    src/component.cpp
-    src/motor.cpp
-    src/touch_sensor.cpp
-    src/controller.cpp
     src/database_server.cpp
     src/database_client.cpp
     src/db_component.cpp

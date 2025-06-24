@@ -27,12 +27,14 @@ void DatabaseServer::run() {
     while (true) {
         int client = m_server.acceptClient();
         if (client < 0) continue;
-        std::string msg;
-        while (m_server.receiveData(client, msg)) {
-            std::string reply = handleMessage(msg);
-            if (!m_server.sendData(client, reply)) break;
-        }
-        m_server.closeSocket(client);
+        std::thread([this, client]() {
+            std::string msg;
+            while (m_server.receiveData(client, msg)) {
+                std::string reply = handleMessage(msg);
+                if (!m_server.sendData(client, reply)) break;
+            }
+            m_server.closeSocket(client);
+        }).detach();
     }
 }
 
