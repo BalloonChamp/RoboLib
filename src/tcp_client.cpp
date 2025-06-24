@@ -23,7 +23,8 @@ bool TcpClient::connectToServer() {
     addr.sin_port = htons(m_port);
     inet_pton(AF_INET, m_host.c_str(), &addr.sin_addr);
     if (connect(m_sock, (sockaddr*)&addr, sizeof(addr)) < 0) {
-        perror("connect");
+        close(m_sock);
+        m_sock = -1;
         return false;
     }
     return true;

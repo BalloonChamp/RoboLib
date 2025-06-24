@@ -6,28 +6,44 @@ int main() {
     TcpClient motor2("127.0.0.1", MOTOR2_PORT);
     TcpClient sensor("127.0.0.1", SENSOR_PORT);
 
-    if (!motor1.connectToServer() || !motor2.connectToServer() || !sensor.connectToServer()) {
-        std::cerr << "Failed to connect to components\n";
-        return 1;
+
+    bool m1ok = motor1.connectToServer();
+    if (!m1ok) std::cerr << "Warning: could not connect to Motor1\n";
+    bool m2ok = motor2.connectToServer();
+    if (!m2ok) std::cerr << "Warning: could not connect to Motor2\n";
+    bool senok = sensor.connectToServer();
+    if (!senok) std::cerr << "Warning: could not connect to TouchSensor\n";
+
+    if (!m1ok && !m2ok && !senok) {
+        std::cerr << "No components connected. Continuing...\n";
     }
 
-    auto ping = [](TcpClient& client){
+    auto ping = [](TcpClient& client, const std::string& name){
         client.sendData("PING");
-        std::string reply; client.receiveData(reply);
-        std::cout << reply << "\n";
+        std::string reply; if (client.receiveData(reply)) {
+            std::cout << reply << "\n";
+        } else {
+            std::cerr << "No reply from " << name << "\n";
+        }
     };
 
-    ping(motor1);
-    ping(motor2);
-    ping(sensor);
+    if (m1ok) ping(motor1, "Motor1");
+    if (m2ok) ping(motor2, "Motor2");
+    if (senok) ping(sensor, "TouchSensor");
 
-    motor1.sendData("MOVE 10");
-    std::string r; motor1.receiveData(r); std::cout << r << "\n";
+    std::string r;
+    if (m1ok) {
+        motor1.sendData("MOVE 10");
+        if (motor1.receiveData(r)) std::cout << r << "\n";
+    }
 
-    sensor.sendData("READ"); sensor.receiveData(r); std::cout << r << "\n";
+    if (senok) {
+        sensor.sendData("READ");
+        if (sensor.receiveData(r)) std::cout << r << "\n";
+    }
 
-    motor1.closeConnection();
-    motor2.closeConnection();
-    sensor.closeConnection();
+    if (m1ok) motor1.closeConnection();
+    if (m2ok) motor2.closeConnection();
+    if (senok) sensor.closeConnection();
     return 0;
 }

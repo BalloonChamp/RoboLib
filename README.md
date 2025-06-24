@@ -8,9 +8,16 @@ Example framework for robot components communicating over TCP.
 ./scripts/build.sh
 ```
 
-## Run components
+## Run
 
-In separate terminals run:
+Start the main controller first. It will warn if a component is not yet
+available but continues running.
+
+```bash
+./scripts/run_main.sh
+```
+
+In separate terminals start any components you wish to run:
 
 ```bash
 ./scripts/run_motor1.sh
@@ -18,10 +25,5 @@ In separate terminals run:
 ./scripts/run_sensor.sh
 ```
 
-Then run main controller:
-
-```bash
-./scripts/run_main.sh
-```
-
 This demonstrates communication between the main process and each component.
+
