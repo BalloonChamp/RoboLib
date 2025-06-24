@@ -1,5 +1,6 @@
 #pragma once
 #include "robotlib/db_component.h"
+#include "robotlib/data_packet.h"
 
 class DbTouchSensor : public DbComponent {
 public:
@@ -9,4 +10,5 @@ protected:
     void sendTelemetry(DatabaseClient& db) override;
 private:
     bool m_pressed;
+    DataPacket m_statePacket;
 };

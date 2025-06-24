@@ -1,5 +1,6 @@
 #pragma once
 #include "robotlib/db_component.h"
+#include "robotlib/data_packet.h"
 
 class DbMotor : public DbComponent {
 public:
@@ -10,4 +11,5 @@ protected:
 private:
     int m_id;
     int m_position;
+    DataPacket m_posPacket;
 };

@@ -66,3 +66,7 @@ This demonstrates communication between the main process and each component.
 Each component stays active in its own loop waiting for commands from the
 controller. The main loop polls the components continuously and occasionally
 changes motor positions to verify everything is still connected.
+
+The database process now shows a live table of the latest telemetry from every
+component. Columns list the component, telemetry key, value and how many
+seconds ago it was updated.

@@ -2,6 +2,7 @@
 #include "robotlib/base_component.h"
 #include "robotlib/database_client.h"
 #include <string>
+#include "robotlib/data_packet.h"
 
 class DbComponent : public BaseComponent {
 public:

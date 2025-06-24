@@ -18,6 +18,7 @@ add_library(robotlib
     src/db_component.cpp
     src/db_motor.cpp
     src/db_touch_sensor.cpp
+    src/data_packet.cpp
     src/scheduler.cpp
 )
 

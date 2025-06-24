@@ -2,7 +2,8 @@
 #include <sstream>
 
 DbTouchSensor::DbTouchSensor(const std::string& name, int dbPort)
-    : DbComponent(name, dbPort), m_pressed(false) {}
+    : DbComponent(name, dbPort), m_pressed(false),
+      m_statePacket("Sensor", "pressed", "0", 500) {}
 
 std::string DbTouchSensor::handleCommand(const std::string& cmd) {
     std::istringstream iss(cmd); std::string op; iss >> op;
@@ -12,5 +13,9 @@ std::string DbTouchSensor::handleCommand(const std::string& cmd) {
 }
 
 void DbTouchSensor::sendTelemetry(DatabaseClient& db) {
-    db.publishTelemetry("Sensor", "pressed", m_pressed ? "1" : "0");
+    if (m_statePacket.shouldUpdate()) {
+        m_statePacket.value = m_pressed ? "1" : "0";
+        db.publishTelemetry(m_statePacket.component, m_statePacket.key, m_statePacket.value);
+        m_statePacket.updateTimestamp();
+    }
 }
