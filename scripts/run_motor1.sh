@@ -1,2 +1,2 @@
 #!/bin/bash
-./build/motor1
+./build/robot --motor 1

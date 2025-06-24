@@ -1,13 +1,14 @@
 #pragma once
 
 #include <string>
+#include "robotlib/base_component.h"
 #include "robotlib/tcp_server.h"
 
-class Component {
+class Component : public BaseComponent {
 public:
     Component(const std::string& name, int port);
     virtual ~Component();
-    void run();
+    void run() override;
 protected:
     virtual std::string handleMessage(const std::string& message) = 0;
 private:

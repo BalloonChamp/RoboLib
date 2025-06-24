@@ -1,2 +1,2 @@
 #!/bin/bash
-./build/main
+./build/robot --main
