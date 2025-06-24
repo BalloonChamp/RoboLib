@@ -10,8 +10,8 @@ Example framework for robot components communicating over TCP.
 
 ## Run
 
-Start the main controller first. It will warn if a component is not yet
-available but continues running.
+Start the main controller first. It will keep running and periodically
+attempt to connect to any components that are not yet available.
 
 ```bash
 ./scripts/run_main.sh
@@ -26,4 +26,8 @@ In separate terminals start any components you wish to run:
 ```
 
 This demonstrates communication between the main process and each component.
+
+Each component stays active in its own loop waiting for commands from the
+controller. The main loop polls the components continuously and occasionally
+changes motor positions to verify everything is still connected.
 

@@ -12,14 +12,19 @@ void Component::run() {
         return;
     }
     std::cout << m_name << " listening...\n";
-    int client = m_server.acceptClient();
-    if (client < 0) return;
-    std::cout << m_name << " client connected\n";
-    std::string msg;
-    while (m_server.receiveData(client, msg)) {
-        std::string reply = handleMessage(msg);
-        if (!m_server.sendData(client, reply)) break;
+    while (true) {
+        int client = m_server.acceptClient();
+        if (client < 0) {
+            continue;
+        }
+        std::cout << m_name << " client connected\n";
+        std::string msg;
+        while (m_server.receiveData(client, msg)) {
+            std::string reply = handleMessage(msg);
+            if (!m_server.sendData(client, reply)) break;
+        }
+        m_server.closeSocket(client);
+        std::cout << m_name << " client disconnected\n";
     }
-    m_server.closeSocket(client);
 }
 
