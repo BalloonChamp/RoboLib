@@ -13,6 +13,12 @@ add_library(robotlib
     src/motor.cpp
     src/touch_sensor.cpp
     src/controller.cpp
+    src/database_server.cpp
+    src/database_client.cpp
+    src/db_component.cpp
+    src/db_motor.cpp
+    src/db_touch_sensor.cpp
+    src/scheduler.cpp
 )
 
 add_executable(robot src/main.cpp)
