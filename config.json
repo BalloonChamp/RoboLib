@@ -1,0 +1,6 @@
+{
+    "motors": ["Motor1", "Motor2"],
+    "sensors": ["TouchSensor"],
+    "start_database": true,
+    "redis_port": 6379
+}
