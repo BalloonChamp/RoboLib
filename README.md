@@ -1,6 +1,9 @@
 # RoboLib
 
-Example framework for robot components communicating over TCP.
+Simple framework for building robots from modular components. Every
+component communicates through a small in process database managed by
+`DatabaseComponent`. Configuration is loaded from a JSON file so the
+same executable can be reused on many machines.
 
 ## Build
 
@@ -10,30 +13,11 @@ Example framework for robot components communicating over TCP.
 
 ## Run
 
-Start the main controller first. It will keep running and periodically
-attempt to connect to any components that are not yet available.
+After building, run the project by providing a configuration file:
 
 ```bash
-./scripts/run_main.sh
+./scripts/run.sh configs/example.json
 ```
 
-In separate terminals start any components you wish to run:
-
-```bash
-./scripts/run_motor1.sh
-./scripts/run_motor2.sh
-./scripts/run_sensor.sh
-```
-
-These scripts now launch a single `robot` binary with different flags
-so you can also invoke it manually. For example `./build/robot --motor 1`
-starts the first motor component while `./build/robot --main` starts the
-controller loop. The main loop accepts optional `--motor-port <p>` and
-`--sensor-port <p>` flags which can be repeated to configure additional
-components.
-
-This demonstrates communication between the main process and each component.
-
-Each component stays active in its own loop waiting for commands from the
-controller. The main loop polls the components continuously and occasionally
-changes motor positions to verify everything is still connected.
+This will start the main controller along with any components defined in
+`example.json`.
