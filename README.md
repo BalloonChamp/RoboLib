@@ -25,12 +25,10 @@ In separate terminals start any components you wish to run:
 ./scripts/run_sensor.sh
 ```
 
-These scripts now launch a single `robot` binary with different flags
-so you can also invoke it manually. For example `./build/robot --motor 1`
-starts the first motor component while `./build/robot --main` starts the
-controller loop. The main loop accepts optional `--motor-port <p>` and
-`--sensor-port <p>` flags which can be repeated to configure additional
-components.
+The new architecture uses a single `robot` executable driven by a JSON
+configuration file. Run `./build/robot <config>` where `<config>` defaults to
+`config.json`. The file specifies component names, whether to start the Redis
+database component, and the port used by Redis.
 
 This demonstrates communication between the main process and each component.
 

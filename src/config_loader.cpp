@@ -9,5 +9,6 @@ AppConfig loadConfig(const std::string& path) {
     if (j.contains("motors")) cfg.motors = j["motors"].get<std::vector<std::string>>();
     if (j.contains("sensors")) cfg.sensors = j["sensors"].get<std::vector<std::string>>();
     if (j.contains("start_database")) cfg.start_database = j["start_database"].get<bool>();
+    if (j.contains("redis_port")) cfg.redis_port = j["redis_port"].get<int>();
     return cfg;
 }

@@ -13,14 +13,14 @@ int main(int argc, char* argv[]) {
     if (argc > 1) cfgPath = argv[1];
     AppConfig cfg = loadConfig(cfgPath);
 
-    Redis db;
+    Redis db("127.0.0.1", cfg.redis_port);
     if (!db.connect()) {
         std::cerr << "Failed to connect to redis\n";
         return 1;
     }
 
     std::vector<std::thread> threads;
-    DatabaseComponent dbComp;
+    DatabaseComponent dbComp(cfg.redis_port);
     if (cfg.start_database) {
         threads.emplace_back([&](){ dbComp.run(); });
         std::this_thread::sleep_for(std::chrono::seconds(1));
