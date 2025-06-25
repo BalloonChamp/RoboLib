@@ -1,6 +1,9 @@
 # RoboLib
 
-Example framework for robot components communicating over TCP.
+Example framework for robot components communicating through a central
+`Database` process. Components publish telemetry and receive commands
+via the database rather than opening direct TCP connections to the main
+controller.
 
 ## Build
 
@@ -10,30 +13,35 @@ Example framework for robot components communicating over TCP.
 
 ## Run
 
-Start the main controller first. It will keep running and periodically
-attempt to connect to any components that are not yet available.
+### Database example
+
+Launch the database first:
 
 ```bash
-./scripts/run_main.sh
+./scripts/run_database.sh
 ```
 
-In separate terminals start any components you wish to run:
+Then in other terminals start the database aware components and a scheduler:
 
 ```bash
-./scripts/run_motor1.sh
-./scripts/run_motor2.sh
-./scripts/run_sensor.sh
+./scripts/run_dbmotor1.sh
+./scripts/run_dbmotor2.sh
+./scripts/run_dbsensor.sh
+./scripts/run_scheduler.sh
 ```
 
-These scripts now launch a single `robot` binary with different flags
-so you can also invoke it manually. For example `./build/robot --motor 1`
-starts the first motor component while `./build/robot --main` starts the
-controller loop. The main loop accepts optional `--motor-port <p>` and
-`--sensor-port <p>` flags which can be repeated to configure additional
-components.
+If you prefer to run the entire database based setup from a single command you
+can use `db_control.sh`:
 
-This demonstrates communication between the main process and each component.
+```bash
+./scripts/db_control.sh start   # start all processes
+./scripts/db_control.sh stop    # stop them again
+```
 
-Each component stays active in its own loop waiting for commands from the
-controller. The main loop polls the components continuously and occasionally
-changes motor positions to verify everything is still connected.
+This demonstrates communication between a scheduler process and each
+component. The scheduler periodically sends commands through the
+database while components update their telemetry at fixed intervals.
+
+The database process now shows a live table of the latest telemetry from every
+component. Columns list the component, telemetry key, value and how many
+seconds ago it was updated.
