@@ -1,8 +1,8 @@
 #include "robotlib/touch_sensor.h"
 #include <sstream>
 
-TouchSensor::TouchSensor(const std::string& name, int port)
-    : Component(name, port), m_pressed(false) {}
+TouchSensor::TouchSensor(const std::string& name, Redis& db)
+    : RedisComponent(name, db), m_pressed(false) {}
 
 std::string TouchSensor::handleMessage(const std::string& message) {
     std::istringstream iss(message);

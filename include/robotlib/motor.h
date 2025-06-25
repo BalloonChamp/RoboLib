@@ -1,9 +1,9 @@
 #pragma once
-#include "robotlib/component.h"
+#include "robotlib/redis_component.h"
 
-class Motor : public Component {
+class Motor : public RedisComponent {
 public:
-    Motor(const std::string& name, int port, int id);
+    Motor(const std::string& name, Redis& db, int id);
 protected:
     std::string handleMessage(const std::string& message) override;
 private:

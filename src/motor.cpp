@@ -1,8 +1,8 @@
 #include "robotlib/motor.h"
 #include <sstream>
 
-Motor::Motor(const std::string& name, int port, int id)
-    : Component(name, port), m_id(id), m_position(0) {}
+Motor::Motor(const std::string& name, Redis& db, int id)
+    : RedisComponent(name, db), m_id(id), m_position(0) {}
 
 std::string Motor::handleMessage(const std::string& message) {
     std::istringstream iss(message);

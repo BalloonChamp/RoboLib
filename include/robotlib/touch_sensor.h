@@ -1,9 +1,9 @@
 #pragma once
-#include "robotlib/component.h"
+#include "robotlib/redis_component.h"
 
-class TouchSensor : public Component {
+class TouchSensor : public RedisComponent {
 public:
-    TouchSensor(const std::string& name, int port);
+    TouchSensor(const std::string& name, Redis& db);
 protected:
     std::string handleMessage(const std::string& message) override;
 private:
