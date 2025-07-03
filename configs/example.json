@@ -1,9 +1,0 @@
-{
-  "components": [
-    {"type": "Motor", "id": 1},
-    {"type": "Scheduler", "commands": [
-      {"delay_ms": 1000, "target": "motor1", "command": "MOVE 10"},
-      {"delay_ms": 2000, "target": "motor1", "command": "MOVE 20"}
-    ]}
-  ]
-}
