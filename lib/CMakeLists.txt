@@ -1,17 +1,32 @@
-# Build a shared library called libshared
-add_library(libshared
-  src/libshared.cpp
+cmake_minimum_required(VERSION 3.15)
+project(libshared VERSION 1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD      17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS     OFF)
+
+# ——— Automatically grab all .cpp under src/ ——————————————————————————
+file(GLOB LIB_SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp
 )
 
-# Install the public include directory for downstream
-target_include_directories(libshared
+add_library(shared
+    SHARED
+    ${LIB_SRC}
+)
+
+target_include_directories(shared
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
-# Set the library version (optional)
-set_target_properties(libshared PROPERTIES
-  VERSION 1.0.0
-  SOVERSION 1
+set_target_properties(shared PROPERTIES
+  VERSION   ${PROJECT_VERSION}
+  SOVERSION ${PROJECT_VERSION_MAJOR}
 )
+
+install(TARGETS shared
+        LIBRARY DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)

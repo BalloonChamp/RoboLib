@@ -1,19 +1,33 @@
-add_executable(AppFoo
-  src/AppFoo.cpp
+cmake_minimum_required(VERSION 3.15)
+project(AppFoo LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD      17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# ——— Auto‐include all .cpp under src/ ——————————————————————————————
+file(GLOB APPFOO_SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
 )
 
-# Tell CMake where to find headers (if needed)
+add_executable(AppFoo
+    ${APPFOO_SRC}
+)
+
 target_include_directories(AppFoo
   PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/lib/include
     ${PROJECT_SOURCE_DIR}/components/ComponentA/include
-    ${PROJECT_SOURCE_DIR}/components/ComponentB/include
 )
 
-# Link against the shared library and whichever components you need:
 target_link_libraries(AppFoo
   PRIVATE
-    libshared     # the .so from lib/
-    ComponentA    # static lib for component A
-    ComponentB    # static lib for component B
+    shared
+    ComponentA
+)
+
+set_target_properties(AppFoo PROPERTIES
+  SKIP_BUILD_RPATH         TRUE
+  BUILD_WITH_INSTALL_RPATH TRUE
+  INSTALL_RPATH            "/opt/robolib/lib"
 )
