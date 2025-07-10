@@ -1,19 +1,47 @@
-cmake_minimum_required(VERSION 3.10)
-project(RoboLib LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.15)
+project(MyProject VERSION 1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+# ——— C++ standard ————————————————————————————————————————————————
+set(CMAKE_CXX_STANDARD      17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS     OFF)
 
-include_directories(include)
+# ——— Build options ———————————————————————————————————————————————
+option(BUILD_LIB         "Build the shared library (libshared)"    ON)
+option(BUILD_COMPONENTA  "Build ComponentA library"                 ON)
+option(BUILD_COMPONENTB  "Build ComponentB library"                 ON)
+option(BUILD_APP_MANAGER "Build the AppManager executable"          ON)
+option(BUILD_APP_FOO     "Build the AppFoo executable"              ON)
 
-add_library(robotlib
-    src/tcp_server.cpp
-    src/tcp_client.cpp
-    src/component.cpp
-    src/motor.cpp
-    src/touch_sensor.cpp
-    src/controller.cpp
-)
+# ——— Output directories —————————————————————————————————————————————
+# .a/.lib → lib/, .so/.dll → lib/, executables → bin/
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(robot src/main.cpp)
-target_link_libraries(robot robotlib)
+# ——— RPATH settings: force runtime lookup to /opt/robolib/lib ————————
+set(CMAKE_SKIP_BUILD_RPATH          TRUE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH  TRUE)
+set(CMAKE_INSTALL_RPATH             "/opt/robolib/lib")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+# ——— Subdirectories —————————————————————————————————————————————————————
+if(BUILD_LIB)
+  add_subdirectory(lib)
+endif()
+
+if(BUILD_COMPONENTA)
+  add_subdirectory(components/ComponentA)
+endif()
+
+if(BUILD_COMPONENTB)
+  add_subdirectory(components/ComponentB)
+endif()
+
+if(BUILD_APP_MANAGER)
+  add_subdirectory(apps/AppManager)
+endif()
+
+if(BUILD_APP_FOO)
+  add_subdirectory(apps/AppFoo)
+endif()
