@@ -17,11 +17,13 @@ target_include_directories(AppManager
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/lib/include
+    ${PROJECT_SOURCE_DIR}/components/ComponentA/include
 )
 
 target_link_libraries(AppManager
   PRIVATE
     shared
+    ComponentA
 )
 
 set_target_properties(AppManager PROPERTIES
