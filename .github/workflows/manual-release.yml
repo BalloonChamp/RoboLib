@@ -40,7 +40,7 @@ jobs:
           zip -r ../robolib-release.zip robolib
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: robolib-release
           path: robolib-release.zip
