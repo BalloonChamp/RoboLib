@@ -8,7 +8,6 @@ set(CMAKE_CXX_EXTENSIONS     OFF)
 # ——— Automatically grab all .cpp under src/ ——————————————————————————
 file(GLOB LIB_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp
 )
 
 add_library(shared
