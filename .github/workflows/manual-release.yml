@@ -1,0 +1,46 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential cmake zip
+
+      - name: Configure
+        run: |
+          set -euo pipefail
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          set -euo pipefail
+          cmake --build build -- -j$(nproc)
+
+      - name: Prepare package
+        run: |
+          set -euo pipefail
+          mkdir -p package/robolib/lib package/robolib/apps
+          cp build/lib/*.so* package/robolib/lib/ || true
+          for exe in build/bin/*; do
+            if [ -f "$exe" ] && [ -x "$exe" ]; then
+              cp "$exe" package/robolib/apps/
+            fi
+          done
+
+      - name: Create ZIP
+        run: |
+          set -euo pipefail
+          cd package
+          zip -r ../robolib-release.zip robolib
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: robolib-release
+          path: robolib-release.zip
